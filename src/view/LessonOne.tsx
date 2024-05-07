@@ -17,9 +17,9 @@ export interface Info {
   confirm: boolean;
 }
 
-export type InfoKey = keyof Info;
-
-type PartialInfo = { name: string } | { confirm: boolean };
+type PartialInfo = {
+  [infoKey in keyof Info]: Record<infoKey, Info[infoKey]>;
+}[keyof Info];
 
 const defaultInfo: Info = {
   name: "",

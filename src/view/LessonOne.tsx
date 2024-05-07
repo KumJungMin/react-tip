@@ -1,4 +1,4 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useReducer } from "react";
 import TextField from "@/component/TextField";
 import Form from "@/component/Form";
 import CheckboxField from "@/component/CheckboxField";
@@ -33,14 +33,36 @@ export const InfoContext = createContext({
 });
 
 function LessonOne() {
-  const [info, setInfo] = useState<Info>(defaultInfo);
+  // const [info, setInfo] = useState<Info>(defaultInfo);
+
+  /** 
+   * 문제점: TextField와 CheckboxField에서 setValue 호출시 spread 연산을 이용해야하는 단점이 있다.
+   * => TIP) useReducer로 spread dependency를 제거할 수 있다.
+   * 
+   * "const [state, dispatch] = useReducer(reducer, initialArg, init)""
+   * - reducer: (state{이전값}, action{값 변경 동작}) => newState{변경된 값}
+   * - initialArg: 초기값
+   * - init: 초기값을 만들어주는 함수
+   * 
+   * - state: 현재 상태값
+   * - dispatch: action을 발생시키는 함수
+   * */ 
+
+  // partialInfo에 "(e) => setValue({ [id]: e.target.value })"가 들어가게 된다.
+  // 그래서, useReducer에서 spread 연산을 대신해준다.
+  const [info, setInfo] = useReducer((prevInfo: Info, partialInfo: any) => {
+    return {
+      ...prevInfo,
+      ...partialInfo,
+    };
+  }, defaultInfo);
+
 
   const onSubmit = () => {
     if (info.confirm) {
       alert(`name: ${info.name}`);
     }
   };
-
 
   /** 
    * 1번 룰(유사점 찾기): TextField와 CheckboxField는 모두 value와 setValue를 props로 받는다.
@@ -50,6 +72,9 @@ function LessonOne() {
    * 3-1. 둘 다 같은 data 객체를 받도록 수정한다.
    * 3-2. 중복되는 부분을 제거하고, 공통된 부분을 추출한다.(value, setValue)
    * */ 
+
+
+
   return (
     <Form onSubmit={onSubmit}>
       <InfoContext.Provider value={{ value: info, setValue: setInfo }}>

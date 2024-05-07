@@ -11,8 +11,9 @@ const TextField: React.FC<{
   return (
     <>
       {label}
+      {/* setValue 호출시 spread 연산을 이용해야하는 단점이 있음 */}
       <input 
-        onChange={(e) => setValue({ ...value, [id]: e.target.value })}
+        onChange={(e) => setValue({ [id]: e.target.value })}
         value={value[id].toString()} 
       />
     </>

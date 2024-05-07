@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 
-import type { InfoKey } from "@/view/LessonOne";
+import type { Info } from "@/view/LessonOne";
 import { InfoContext } from "@/view/LessonOne";
 
 const TextField: React.FC<{
-  id: InfoKey;   // key 값에 따라 여러 속성값을 받을 수 있도록 수정
+  id: keyof Omit<Info, "confirm">; // boolean값을 가지는 confirm을 제외한 나머지 속성값을 받을 수 있도록 수정
   label: string;
 }> = ({ label, id }) => {
   const { value, setValue } = useContext(InfoContext);

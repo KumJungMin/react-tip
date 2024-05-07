@@ -1,4 +1,4 @@
-import { useState, createContext, useReducer } from "react";
+import { createContext, useReducer } from "react";
 import TextField from "@/component/TextField";
 import Form from "@/component/Form";
 import CheckboxField from "@/component/CheckboxField";
@@ -14,22 +14,22 @@ import CheckboxField from "@/component/CheckboxField";
 
 export interface Info {
   name: string;
-  password: string;
   confirm: boolean;
 }
 
 export type InfoKey = keyof Info;
 
+type PartialInfo = { name: string } | { confirm: boolean };
+
 const defaultInfo: Info = {
   name: "",
-  password: "",
   confirm: false,
 };
 
 // provider를 사용하여 value를 전달할 수 있도록 한다.
 export const InfoContext = createContext({
   value: defaultInfo,
-  setValue: (v: Info) => {},
+  setValue: (v: PartialInfo) => {},
 });
 
 function LessonOne() {
@@ -50,7 +50,7 @@ function LessonOne() {
 
   // partialInfo에 "(e) => setValue({ [id]: e.target.value })"가 들어가게 된다.
   // 그래서, useReducer에서 spread 연산을 대신해준다.
-  const [info, setInfo] = useReducer((prevInfo: Info, partialInfo: any) => {
+  const [info, setInfo] = useReducer((prevInfo: Info, partialInfo: PartialInfo) => {
     return {
       ...prevInfo,
       ...partialInfo,

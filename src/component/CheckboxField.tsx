@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import type { InfoKey } from '@/view/LessonOne';
+import type { Info } from "@/view/LessonOne";
 import { InfoContext } from '@/view/LessonOne';
 
 const CheckboxField: React.FC<{
-  id: InfoKey;   // id 값에 따라 여러 속성값을 받을 수 있도록 수정
+  id: keyof Omit<Info, "name">;
   label: string;
 }> = ({ label, id }) => {
   const { value, setValue } = useContext(InfoContext);

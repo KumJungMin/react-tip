@@ -24,4 +24,28 @@ module.exports = {
       extensions: [".js", ".jsx", ".ts", ".tsx"],
     },
   },
+  overrides: [
+    {
+      files: ["src/utils/test/**.ts", "src/**/*.spec.ts", "src/**/*.spec.tsx"],
+      plugins: ["vitest"],
+      rules: {
+        "vitest/no-large-snapshots": "error",
+        "vitest/no-identical-title": "off",
+        "vitest/expect-expect": "off",
+      },
+      extends: ["plugin:vitest/recommended"],
+      globals: {
+        globalThis: true,
+        describe: true,
+        it: true,
+        test: true,
+        expect: true,
+        beforeEach: true,
+        afterEach: true,
+        beforeAll: true,
+        afterAll: true,
+        vi: true,
+      },
+    },
+  ],
 };

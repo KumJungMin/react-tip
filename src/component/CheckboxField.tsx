@@ -2,8 +2,13 @@ import React, { useContext } from "react";
 import type { Info } from "@/view/LessonOne";
 import { InfoContext } from '@/view/LessonOne';
 
+type StringKeys = {
+  [K in keyof Info]: Info[K] extends boolean ? K : never;
+}[keyof Info];
+
+
 const CheckboxField: React.FC<{
-  id: keyof Omit<Info, "name">;
+  id: StringKeys;
   label: string;
 }> = ({ label, id }) => {
   const { value, setValue } = useContext(InfoContext);

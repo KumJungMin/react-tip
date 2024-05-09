@@ -3,6 +3,7 @@ import TextField from "@/component/TextField";
 import Form from "@/component/Form";
 import CheckboxField from "@/component/CheckboxField";
 
+import { maxLength, minLength } from "@/utils/validation";
 /** 
  * FLOCKING RULE(리팩토링시 규칙)
  * (https://github.com/benchristel/refactoring-workshop/blob/master/docs/refactorings/flocking-rules.md)
@@ -78,7 +79,7 @@ function LessonOne() {
   return (
     <Form onSubmit={onSubmit}>
       <InfoContext.Provider value={{ value: info, setValue: setInfo }}>
-        <TextField id="name" label="이름" />
+        <TextField id="name" label="이름" validate={[minLength(2), maxLength(6)]} />
         <CheckboxField id="confirm" label="위 내용이 제출됩니다 동의하십니까?" />
       </InfoContext.Provider>
     </Form>

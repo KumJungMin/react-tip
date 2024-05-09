@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import type { Info } from "@/view/LessonOne";
 import { InfoContext } from "@/view/LessonOne";
@@ -24,11 +24,28 @@ type StringKeys = {
   // {name: "name", confirm: never}[name | confirm]은 
   // "name"만 반환하게 된다.
 
+
+type CustomError = string | undefined;
+
 const TextField: React.FC<{
   id: StringKeys;
   label: string;
-}> = ({ label, id }) => {
+  validate?: any;
+}> = ({ label, id, validate }) => {
   const { value, setValue } = useContext(InfoContext);
+  const [error, setError] = useState<CustomError>('');
+
+  useEffect(() => {
+    const errors: CustomError[] = validate.map(
+      (validationFunc: any) => {
+        if (value[id]) return validationFunc(value[id]);
+      }
+    );
+    const err = errors.find(Boolean);
+    setError(err);
+  }, [value[id]]);
+
+
   return (
     <>
       {label}
@@ -37,6 +54,7 @@ const TextField: React.FC<{
         onChange={(e) => setValue({ [id]: e.target.value })}
         value={value[id].toString()} 
       />
+      {error && <p style={{ color: "crimson" }}>{error}</p>}
     </>
   );
 };

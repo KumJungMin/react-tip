@@ -9,8 +9,8 @@ describe("LessonOne", () => {
     render(<LessonOne />);
 
     const nameLabel = screen.getByText(/이름/i);
-    const nameInput = screen.getByRole("textbox");
-    const checkbox = screen.getByRole("checkbox");
+    const nameInput = screen.getByTestId("name");
+    const checkbox = screen.getByTestId("confirm");
     const button = screen.getByRole("button");
 
     // assert
@@ -26,8 +26,9 @@ describe("LessonOne", () => {
     window.alert = alertMock;
     render(<LessonOne />);
 
-    const nameInput = screen.getByRole("textbox");
-    const checkbox = screen.getByRole("checkbox");
+
+    const nameInput = screen.getByTestId("name");
+    const checkbox = screen.getByTestId("confirm");
     const button = screen.getByRole("button");
 
     // act
@@ -45,7 +46,7 @@ describe("LessonOne", () => {
     window.alert = alertMock;
     render(<LessonOne />);
 
-    const nameInput = screen.getByRole("textbox");
+    const nameInput = screen.getByTestId("name");
     const button = screen.getByRole("button");
 
     // act
@@ -54,5 +55,20 @@ describe("LessonOne", () => {
 
     // assert
     expect(alertMock).not.toHaveBeenCalled();
+  });
+
+  it("이름의 길이가 3~6자 사이가 아닐 경우, 에러 메시지가 출력되는지", () => {
+    // arrange
+    render(<LessonOne />);
+
+    const nameInput = screen.getByTestId("name");
+    const button = screen.getByRole("button");
+
+    // act
+    fireEvent.change(nameInput, { target: { value: "h" } });
+    fireEvent.click(button);
+
+    // assert
+    expect(screen.getByText(/최소 2글자 이상 입력해주세요./i)).toBeInTheDocument();
   });
 });

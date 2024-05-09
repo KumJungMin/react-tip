@@ -31,6 +31,7 @@ const CheckboxField: React.FC<{
       {label}
       {/* setValue 호출시 spread 연산을 이용해야하는 단점이 있음 */}
       <input
+        data-testid={id}
         onChange={(e) => setValue({ [id]: e.target.checked })}
         value={value[id].toString()}
         type={"checkbox"}

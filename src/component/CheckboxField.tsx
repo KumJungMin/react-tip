@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import type { Info } from "@/view/LessonOne";
 import { InfoContext } from '@/view/LessonOne';
 
@@ -6,12 +6,26 @@ type StringKeys = {
   [K in keyof Info]: Info[K] extends boolean ? K : never;
 }[keyof Info];
 
+type CustomError = undefined | string;
 
 const CheckboxField: React.FC<{
   id: StringKeys;
   label: string;
-}> = ({ label, id }) => {
+  validate?: any;
+}> = ({ label, id, validate }) => {
   const { value, setValue } = useContext(InfoContext);
+  const [error, setError] = useState<CustomError>();
+
+  useEffect(() => {
+    const errors: CustomError[] = validate.map(
+    (validationFunc: any) => {
+      if (value[id]) return validationFunc(value[id]);
+    }
+  );
+    const err = errors.find(Boolean);
+    setError(err);
+  }, [value[id]]);
+
   return (
     <>
       {label}
@@ -21,6 +35,7 @@ const CheckboxField: React.FC<{
         value={value[id].toString()}
         type={"checkbox"}
       />
+      {error && <p style={{ color: "crimson" }}>{error}</p>}
     </>
   );
 };

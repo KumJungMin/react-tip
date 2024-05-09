@@ -1,4 +1,4 @@
-function minLength(min: number) {
+export function minLength(min: number) {
     return function (value: string) {
         return value.length >= min ? undefined : `최소 ${min}글자 이상 입력해주세요.`;
     };
@@ -12,8 +12,12 @@ function minLength(min: number) {
  * maxLength(10)(value)
  * => value.length <= 10 ? undefined : `최대 10글자 이하로 입력해주세요.`
  */
-function maxLength(max: number) {
+export function maxLength(max: number) {
     return function (value: string) {
         return value.length <= max ? undefined : `최대 ${max}글자 이하로 입력해주세요.`;
     };
+}
+
+export function checked(value: boolean) {
+    return value ? undefined : "필수 동의사항입니다.";
 }

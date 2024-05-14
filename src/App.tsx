@@ -1,35 +1,81 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useTransition,  memo, useEffect, useState  } from "react";
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const targetURL =
+  "https://raw.githubusercontent.com/jason-chao/wordle-solver/main/english_words_original_wordle.txt";
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function countLetters(str) {
+  return str.split("").reduce((cs, l) => {
+    cs[l] = (cs[l] || 0) + 1;
+    return cs;
+  }, {});
+}
+function isMatch(word, letterCounts) {
+  const ws = word.split("");
+  return Object.entries(letterCounts).every(
+    ([l, c]) => ws.filter((w) => w == l).length >= c
+  );
 }
 
-export default App
+function Word({ name, highlight = "" }) {
+  const letters = name.split("");
+  return (
+    <li>
+      {letters.map((l, i) => (
+        <span className={highlight.includes(l) ? "h" : ""} key={i}>
+          {l}
+        </span>
+      ))}
+    </li>
+  );
+}
+
+const Words = memo(({ list, filter }) => {
+  const counts = countLetters(filter);
+  const filteredList = list.filter((name) => isMatch(name, counts));
+  return (
+    <ul>
+      {filteredList.map((name) => (
+        <Word key={name} name={name} highlight={filter} />
+      ))}
+    </ul>
+  );
+});
+
+function FilterWords() {
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    fetch(targetURL)
+      .then((r) => r.text())
+      .then((r) => setList(r.split("\n").sort()));
+  }, []);
+  const [filter, setFilter] = useState("");
+  const [deferedFilter, setDeferedFilter] = useState("");
+
+  const [isPending, startTransition] = useTransition();
+
+  const handleChange = ({ target: { value } }) => {
+    setFilter(value);
+
+    startTransition(() => {
+      setDeferedFilter(value);
+    });
+  };
+  return (
+    <main>
+      <label>
+        Filter:
+        <input type="search" value={filter} onChange={handleChange} />
+      </label>
+      {isPending ? (
+        <p>Loading</p>
+      ) : (
+        <Words list={list} filter={deferedFilter} />
+      )}
+    </main>
+  );
+}
+
+export default function App() {
+  return <FilterWords />;
+}

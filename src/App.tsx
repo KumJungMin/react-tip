@@ -50,14 +50,22 @@ function FilterWords() {
       .then((r) => setList(r.split("\n").sort()));
   }, []);
   const [filter, setFilter] = useState("");
-  const [deferedFilter, setDeferedFilter] = useState("");
+  const [deferedFilter, setDeferedFilter] = useState(""); // deferedFilter: 지연된 필터
 
   const [isPending, startTransition] = useTransition();
 
+  /** 
+   * 문제1: handleChange로 filter값을 변경하는데, 이때 input, words가 re-rendering 됨
+   * 해결책: input의 렌더링을 유지하고, Words의 렌더링을 지연시키기 -> useTransition 쓰기!
+   * */ 
   const handleChange = ({ target: { value } }) => {
     setFilter(value);
 
     startTransition(() => {
+      /** 
+       * startTransition에 우선순위를 낮추고 싶은 코드를 넣어줌
+       * setDeferedFilter는 우선순위가 낮아서 렌더링이 지연됨 + 대신 전체 렌더링 시간이 줄어듦!
+       * */
       setDeferedFilter(value);
     });
   };

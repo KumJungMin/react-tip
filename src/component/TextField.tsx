@@ -1,7 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+import React from "react";
 
 import type { Info } from "@/view/LessonOne";
-import { InfoContext } from "@/view/LessonOne";
+import useInput from "@/hooks/useInput";
 
 type StringKeys = {
   // [K in keyof Info] 는 Info의 key값을 순회한다.
@@ -24,26 +24,12 @@ type StringKeys = {
   // {name: "name", confirm: never}[name | confirm]은 
   // "name"만 반환하게 된다.
 
-
-type CustomError = string | undefined;
-
 const TextField: React.FC<{
   id: StringKeys;
   label: string;
   validate?: any;
 }> = ({ label, id, validate }) => {
-  const { value, setValue } = useContext(InfoContext);
-  const [error, setError] = useState<CustomError>('');
-
-  useEffect(() => {
-    const errors: CustomError[] = validate.map(
-      (validationFunc: any) => {
-        if (value[id]) return validationFunc(value[id]);
-      }
-    );
-    const err = errors.find(Boolean);
-    setError(err);
-  }, [value[id]]);
+  const { error, value, onChange } = useInput({ id, validate });
 
 
   return (
@@ -52,7 +38,7 @@ const TextField: React.FC<{
       {/* setValue 호출시 spread 연산을 이용해야하는 단점이 있음 */}
       <input 
         data-testid={id}
-        onChange={(e) => setValue({ [id]: e.target.value })}
+        onChange={(e) => onChange(e.target.value)}
         value={value[id].toString()} 
       />
       {error && <p style={{ color: "crimson" }}>{error}</p>}

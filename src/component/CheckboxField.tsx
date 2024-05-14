@@ -1,30 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import type { Info } from "@/view/LessonOne";
-import { InfoContext } from '@/view/LessonOne';
+import useInput from "@/hooks/useInput";
 
-type StringKeys = {
+export type StringKeys = {
   [K in keyof Info]: Info[K] extends boolean ? K : never;
 }[keyof Info];
-
-type CustomError = undefined | string;
 
 const CheckboxField: React.FC<{
   id: StringKeys;
   label: string;
   validate?: any;
 }> = ({ label, id, validate }) => {
-  const { value, setValue } = useContext(InfoContext);
-  const [error, setError] = useState<CustomError>();
-
-  useEffect(() => {
-    const errors: CustomError[] = validate.map(
-    (validationFunc: any) => {
-      if (value[id]) return validationFunc(value[id]);
-    }
-  );
-    const err = errors.find(Boolean);
-    setError(err);
-  }, [value[id]]);
+  const { error, value, onChange } = useInput({ id, validate });
 
   return (
     <>
@@ -32,7 +19,7 @@ const CheckboxField: React.FC<{
       {/* setValue 호출시 spread 연산을 이용해야하는 단점이 있음 */}
       <input
         data-testid={id}
-        onChange={(e) => setValue({ [id]: e.target.checked })}
+        onChange={(e) => onChange(e.target.checked)}
         value={value[id].toString()}
         type={"checkbox"}
       />

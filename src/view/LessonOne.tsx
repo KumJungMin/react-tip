@@ -18,7 +18,7 @@ export interface Info {
   confirm: boolean;
 }
 
-type PartialInfo = {
+export type PartialInfo = {
   [infoKey in keyof Info]: Record<infoKey, Info[infoKey]>;
 }[keyof Info];
 
@@ -76,7 +76,7 @@ function LessonOne() {
 
 
 
-  return (
+  return ( 
     <Form onSubmit={onSubmit}>
       <InfoContext.Provider value={{ value: info, setValue: setInfo }}>
         <TextField id="name" label="이름" validate={[minLength(2), maxLength(6)]} />
